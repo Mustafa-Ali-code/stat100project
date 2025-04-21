@@ -1,0 +1,39 @@
+---
+title: "Digital Divide in U.S. Counties"
+format: 
+  revealjs:
+    title-slide: false
+editor_options: 
+  chunk_output_type: console
+---
+
+
+---
+
+## Broadband Usage vs. Availability
+
+![](usage_vs_availability.png){width=90%}
+
+---
+
+## Broadband Usage vs. Median Income
+
+![](usage_vs_income.png){width=90%}
+
+---
+
+## Broadband Usage vs. Education
+
+![](usage_vs_education.png){width=90%}
+
+---
+
+## Top 10 Counties by Broadband Usage
+
+![](top10_table.png){width=85%}
+
+---
+
+## Broadband Usage by County (Choropleth Map)
+
+![](broadband_usage_map.png){width=100%}
