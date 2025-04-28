@@ -8,6 +8,9 @@ library(tigris)
 library(dplyr)
 library(stringr)
 library(plotrix)
+library(ggplot2)
+library(reshape2)
+
 
 broadband <- read_csv("https://raw.githubusercontent.com/Mustafa-Ali-code/stat100project/refs/heads/main/datasets/broadband_data_2020October.csv")
 education <- read_csv("https://raw.githubusercontent.com/Mustafa-Ali-code/stat100project/refs/heads/main/datasets/Education2023.csv")
@@ -15,7 +18,6 @@ population <- read_csv("https://raw.githubusercontent.com/Mustafa-Ali-code/stat1
 poverty <- read_csv("https://raw.githubusercontent.com/Mustafa-Ali-code/stat100project/refs/heads/main/datasets/Poverty2023.csv")
 unemployment <- read_csv("https://raw.githubusercontent.com/Mustafa-Ali-code/stat100project/refs/heads/main/datasets/Unemployment2023.csv")
 
-# Clean names
 broadband <- clean_names(broadband)
 education <- clean_names(education)
 population <- clean_names(population)
@@ -23,24 +25,18 @@ poverty <- clean_names(poverty)
 unemployment <- clean_names(unemployment)
 
 
-# Step 2: Extract relevant values
-
-# Broadband: availability and usage
 broadband_clean <- broadband |>
   select(fips = county_id, state = st, county_name,
          broadband_availability_per_fcc, broadband_usage)
 
-# Education: % with bachelor's degree (2019–23)
 education_clean <- education |>
   filter(attribute == "Percent of adults with a bachelor's degree or higher, 2019-23") |>
   select(fips = fips_code, pct_bachelors_2023 = value)
 
-# Population: 2023 estimate
 population_clean <- population |>
   filter(attribute == "POP_ESTIMATE_2023") |>
   select(fips = fip_stxt, population_2023 = value)
 
-# Poverty: poverty rate and median income
 poverty_clean <- poverty |>
   filter(attribute %in% c("PCTPOVALL_2023", "MEDHHINC_2023")) |>
   pivot_wider(names_from = attribute, values_from = value) |>
@@ -48,7 +44,6 @@ poverty_clean <- poverty |>
          poverty_rate_2023 = PCTPOVALL_2023,
          median_income_2023 = MEDHHINC_2023)
 
-# Unemployment: 2023 rate
 unemployment_clean <- unemployment |>
   filter(attribute == "Unemployment_rate_2023") |>
   select(fips = fips_code, unemployment_rate_2023 = value)
@@ -171,3 +166,84 @@ top10_table <- final_data |>
   )
 
 tt(top10_table)
+
+# Table of summary stats
+summary_full <- final_data |>
+  summarize(
+    `Broadband Usage` = list(quantile(broadband_usage, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE)),
+    `Availability (FCC)` = list(quantile(broadband_availability_per_fcc, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE)),
+    `Median Income` = list(quantile(median_income_2023, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE)),
+    `% with Bachelor's` = list(quantile(pct_bachelors_2023, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE)),
+    `Poverty Rate` = list(quantile(poverty_rate_2023, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE)),
+    `Unemployment Rate` = list(quantile(unemployment_rate_2023, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE))
+  ) |>
+  tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "Values") |>
+  mutate(
+    Min = sapply(Values, function(x) x[1]),
+    Q1 = sapply(Values, function(x) x[2]),
+    Median = sapply(Values, function(x) x[3]),
+    Q3 = sapply(Values, function(x) x[4]),
+    Max = sapply(Values, function(x) x[5])
+  ) |>
+  select(Variable, Min, Q1, Median, Q3, Max)
+
+tt(summary_full)
+
+
+# Correlation Heatmap
+correlation_data <- final_data |>
+  select(broadband_usage, median_income_2023, pct_bachelors_2023, poverty_rate_2023, unemployment_rate_2023)
+
+corr_matrix <- cor(correlation_data, use = "complete.obs")
+
+corr_matrix_melted <- melt(corr_matrix)
+
+ggplot(corr_matrix_melted, aes(Var1, Var2, fill = value)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1,1)) +
+  geom_text(aes(label = round(value, 2)), color = "black", size = 5) +  # Add correlation values on the tiles
+  theme_minimal() +
+  labs(
+    title = "Correlation Heatmap for Broadband Usage Factors",
+    x = "Variables",
+    y = "Variables",
+    fill = "Correlation"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+#Broadband Usage by Region (North, South, East, West)
+final_data <- final_data |>
+  mutate(region = case_when(
+    state %in% c("ME", "VT", "NH", "MA", "RI", "CT", "NY", "NJ", "PA", "DE", "MD", "DC", "VA") ~ "Northeast",
+    state %in% c("OH", "IN", "IL", "WI", "MI", "IA", "MO", "KY", "MN", "ND", "SD", "NE") ~ "Midwest",
+    state %in% c("WA", "OR", "CA", "ID", "MT", "WY", "CO", "NM", "AZ", "UT", "NV") ~ "West",
+    state %in% c("NC", "SC", "GA", "FL", "AL", "MS", "TN", "AR", "LA", "OK", "TX") ~ "South",
+    TRUE ~ "Other"
+  ))
+
+region_usage <- final_data |>
+  group_by(region) |>
+  summarize(average_usage = mean(broadband_usage, na.rm = TRUE))
+
+ggplot(region_usage, aes(x = region, y = average_usage, fill = region)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Broadband Usage by Region", x = "Region", y = "Average Broadband Usage (%)") +
+  theme_minimal()
+
+
+
+# Map with Usage vs. Availability (The difference)
+map_data <- map_data |>
+  mutate(diff_usage_availability = broadband_availability_per_fcc - broadband_usage)
+
+tmap_mode("view")
+
+tm_shape(map_data) +
+  tm_borders() +
+  tm_polygons("diff_usage_availability", 
+              title = "Difference Between Availability and Usage (%)", 
+              palette = "-RdBu",  # Using a diverging palette to show difference
+              alpha = 0.6) +
+  tm_layout(main.title = "Difference Between Broadband Availability and Usage")

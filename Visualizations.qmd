@@ -12,28 +12,52 @@ editor_options:
 
 ## Broadband Usage vs. Availability
 
-![](usage_vs_availability.png){width=90%}
+![](images/usage_vs_availability.png){width=90%}
 
 ---
 
 ## Broadband Usage vs. Median Income
 
-![](usage_vs_income.png){width=90%}
+![](images/usage_vs_income.png){width=90%}
 
 ---
 
 ## Broadband Usage vs. Education
 
-![](usage_vs_education.png){width=90%}
+![](images/usage_vs_education.png){width=90%}
 
 ---
 
 ## Top 10 Counties by Broadband Usage
 
-![](top10_table.png){width=85%}
+![](images/top10_table.png){width=85%}
 
 ---
 
 ## Broadband Usage by County (Choropleth Map)
 
-![](broadband_usage_map.png){width=100%}
+![](images/broadband_usage_map.png){width=100%}
+
+---
+
+## Table of Summary Stats for Counties
+
+![](images/table_summary_stats.png){width=85%}
+
+---
+
+## Correlation Heatmap
+
+![](images/correlation_heatmap.png){width=85%}
+
+---
+
+## Broadband usage by region
+
+![](images/usage_by_region.png){width=85%}
+
+---
+
+## Map with Usage vs. Availability (The difference)
+
+![](images/difference_map.png){width=85%}

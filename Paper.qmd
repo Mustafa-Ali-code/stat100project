@@ -1,0 +1,20 @@
+---
+title: "Digital Divide in the US"
+author: "Mustafa - Liam"
+format: html
+---
+
+## Introduction
+
+It goes without saying that the internet has grown at an exponential rate, providing more
+access to information and opportunities than ever before. From the stock market to online SAT
+resources on the internet has become the medium of the instruments of civilization. However,
+what about the people who do not have equal access to the Internet? We looked at data from
+across the United States, to see how access to broadband Internet impacted factors such as
+education attainment, and financial prosperity. There is little digestible information on broadband
+access and educational or economic outcomes, so the main point of this project is to combine
+different data sets, so that we can take a closer look at various economic, educational and
+geographic factors that impact access to vital Internet resources. It is very likely that Internet
+access substantially impacts life outcomes, but it is good practice to look at the evidence before
+making a conclusion. We will go through representations of data, but first we should go over the
+origins of the data.
