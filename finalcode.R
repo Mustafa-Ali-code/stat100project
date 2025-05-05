@@ -98,35 +98,25 @@ tm_shape(map_data) +
   tm_crs("auto")
 
 # Graph 2: Usage vs. Median Income
-income_pie_data <- final_data |>
-  mutate(income_group = case_when(
-    median_income_2023 < 50000 ~ "<50k",
-    median_income_2023 >= 50000 & median_income_2023 < 60000 ~ "50–60k",
-    median_income_2023 >= 60000 & median_income_2023 < 70000 ~ "60–70k",
-    median_income_2023 >= 70000 & median_income_2023 < 80000 ~ "70–80k",
-    median_income_2023 >= 80000 ~ "80k+",
-    TRUE ~ NA_character_
-  )) |>
-  group_by(income_group) |>
-  summarize(total_usage = sum(broadband_usage, na.rm = TRUE)) |>
-  na.omit() |>
-  arrange(income_group)
+final_data_income <- final_data |>
+  mutate(income_group = cut(
+    median_income_2023,
+    breaks = c(0, 50000, 60000, 70000, 80000, Inf),
+    labels = c("<50k", "50–60k", "60–70k", "70–80k", "80k+"),
+    right  = FALSE
+  )) |> 
+  filter(!is.na(income_group))
 
-slices <- income_pie_data$total_usage
-percentages <- round(slices / sum(slices) * 100, 1)
-labels <- paste0(income_pie_data$income_group, " (", percentages, "%)")
+ggplot(final_data_income, aes(x = income_group, y = broadband_usage)) +
+  geom_boxplot(outlier.shape = NA, fill = "lightblue") +
+  geom_jitter(width = 0.15, alpha = 0.25, size = 1) +
+  labs(
+    title = "County Broadband Usage by Income Bracket",
+    x     = "Median Household Income",
+    y     = "Broadband Usage (%)"
+  ) +
+  theme_minimal()
 
-pie3D(
-  slices,
-  labels = NA,
-  explode = 0.1,
-  main = "Broadband Usage by Income Group (3D Pie Chart)",
-  radius = 1.4,
-  col = rainbow(length(slices)),
-  labelcex = 1
-)
-
-legend("topright", legend = labels, fill = rainbow(length(slices)), cex = 1.1, bty = "n")
 
 ## Graph 3: Usage vs. Education (% Bachelor's Degree or Higher)
 final_data |>
