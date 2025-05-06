@@ -4,26 +4,8 @@ author: "Mustafa - Liam"
 format: html
 ---
 
-## Introduction
 
-It goes without saying that the internet has grown at an exponential rate, providing more
-access to information and opportunities than ever before. From the stock market to online SAT
-resources on the internet has become the medium of the instruments of civilization. However,
-what about the people who do not have equal access to the Internet? We looked at data from
-across the United States, to see how access to broadband Internet impacted factors such as
-education attainment, and financial prosperity. There is little digestible information on broadband
-access and educational or economic outcomes, so the main point of this project is to combine
-different data sets, so that we can take a closer look at various economic, educational and
-geographic factors that impact access to vital Internet resources. It is very likely that Internet
-access substantially impacts life outcomes, but it is good practice to look at the evidence before
-making a conclusion. We will go through representations of data, but first we should go over the
-origins of the data.
-
----
-title: "Digital Divide in the US"
-author: "Mustafa - Liam"
-format: html
-
+```{r}
 library(tidyverse)
 library(janitor)
 library(sf)
@@ -36,9 +18,10 @@ library(stringr)
 library(plotrix)
 library(ggplot2)
 library(reshape2)
----
+```
 
-## Introduction
+
+## Introduction:
 
 It goes without saying that the internet has grown at an exponential rate, providing more
 access to information and opportunities than ever before. From the stock market to online SAT
@@ -52,6 +35,12 @@ geographic factors that impact access to vital Internet resources. It is very li
 access substantially impacts life outcomes, but it is good practice to look at the evidence before
 making a conclusion. We will go through representations of data, but first we should go over the
 origins of the data.
+
+
+
+## Data Source:
+
+The data on broadband usage and availability itself comes directly from Microsoft,  and is collected through a few different Microsoft services. The data estimated is by household per county. It is important to note that this will only estimate broadband usage by Microsoft users, but given the proliferation of Microsoft devices and services, the heuristic should still be sound. The other statistics such as education attainment, poverty income are all from the census bureau.
 
 
 ```{r}
@@ -147,6 +136,8 @@ tm_shape(map_data) +
   tm_crs("auto")
 ```
 
+**Each dot represents an American county, with broadband usage on the Y axis and broadband availability by area on the X axis. Availability and usage are clearly associated, but not 100 percent correlated.There are a few counties with low broadband availability, but high broadband usage. A reasonable guess would be that most of the people for these counties live clustered together, and that is where the broadband availability would also be. The reverse is also true. There are a surprising number of counties with a very high broadband availability, but less than 25 percent broadband usage. The conclusion to be drawn that availability does not necessarily equal access. Then there must be other factors that impact the access to broadband Internet. **
+
 ```{r}
 # Graph 2: Usage vs. Median Income
 final_data_income <- final_data |>
@@ -168,6 +159,8 @@ ggplot(final_data_income, aes(x = income_group, y = broadband_usage)) +
   ) +
   theme_minimal()
 ```
+
+**Location is not the only thing that is positively correlated with broadband Internet usage, financial brackets are as well. In the less than $50,000 a year income bracket broadband usage coverage is just around 15 percent at the median. In the $50-$60,000 a year bracket the median hovers around the 75th percentile for less than $50,000 a year. With the 75th percentile being around 40 percent broadband usage, It is worth noting that the bracketed distribution is also much wider than the less than $50,000 a year bracket. When household income is raised to  $60,000-$70,000 a year the median increases to around 60 percent. There's a steady increase into the 70 to 80 thousand income per year bracket. However, there's a dramatic jump in the $80,000 plus a year, with the median being above the 75th quartile of the income bracket just below it. The money that a household has access to clearly has an impact on broadband usage. The high Internet speeds provided by broadband would provide an essential advantage and competitive fields, so it would both be an aid in the corporate world and educational worlds.**
 
 ```{r}
 ## Graph 3: Usage vs. Education (% Bachelor's Degree or Higher)
@@ -192,6 +185,8 @@ final_data |>
   theme_minimal()
 ```
 
+**If we think logically, education itself should play a role in access to broadband Internet. For one thing the more educated a person is the more chance there is that they will understand the benefits of broadband Internet, and follow through on using it. Individuals with a higher level of education also gravitate towards white collar jobs, which may require broadband Internet. The higher income levels that often accompany higher education could certainly factor in. In the lowest bracket, in counties with less than 10 percent of people who possess a bachelor's degree, only 20 percent of households in those countries actually use broadband Internet.  In counties where 10 to 20 percent of the population holds a bachelor's degree there is only marginal gains to broadband usage, with broadband usage only increasing to around 25 percent. However, in counties where 20 to 30 percent of people hold a bachelor's degree, there is a big jump in broadband usage. With usage going up to just over 40 percent. In the 30 to 40 percent bracket there's another pretty significant leap up from 40 percent to around 60 percent of households using broadband internet. But after this increase, there seems to be a bit of a threshold. Counties with a 40 to 50 percent population have a bachelor's degree hit the mid 60s in terms of broadband usage. Counties where greater than half of the population holds a bachelor's degree only get up to just below 70 percent. There seems to be a point where the county reaches critical mass, with respect to its educated members– causing there to be enough demand for broadband data to be a viable corporate proposition. This still leaves the people who would benefit the most from the educational opportunities provided by the Internet without it.**
+
 ```{r}
 ## Table: Top 10 Counties by Usage
 top10_table <- final_data |>
@@ -211,6 +206,8 @@ top10_table <- final_data |>
 
 tt(top10_table)
 ```
+
+**What about the areas with exceptional broadband usage? On the top of our list, Hyde County, South Dakota which (according to the census bureau) has just over 1200 people, but only around a 20 percent bachelor degree rate, but 100 percent usage of broadband Internet. This could be due to a few reasons, first the county has an impressive $66,000 in median income. So maybe this is a case where money drives development more than education. Perhaps, the relative isolation of Hyde County has something to do with why everyone uses broadband Internet–maybe there's a singular Internet provider that services the area, and they just up-sell broadband to everyone. One state, Virginia, dominates the chart. All of these countries are essentially part of the metro DC area. Many jobs stationed in the United States’ capital usually relate to the military industrial complex, government, lobbying firms, high-powered think tanks, staffers, intelligence and policy advisors–all careers that would both know about cutting edge communications technology, like broadband Internet, and would benefit greatly from using it. Many of these jobs also require a high degree of education. Washington DC also definitely has the infrastructure to support broadband Internet. It stands to reason that the greater DC area would dominate this list. Broomfield County, Colorado, and Nantucket Massachusetts are both vacation areas and often have quite a well-off seasonal population. It is likely that vacationers wish to have the same comforts that they have back home, hotels and resorts probably also play a role in developing the infrastructure necessary for broadband Internet. Loving county, Texas is a weird case. It has an extremely low population and a pretty impressive average wage. It is likely that whatever industry is the town's main employer built the infrastructure for broadband Internet. This is just a snippet of the United States and this table really only tells us the conditions in which exceptional broadband usage works in particular areas.**
 
 ```{r}
 # Table of summary stats
@@ -236,6 +233,10 @@ summary_full <- final_data |>
 tt(summary_full)
 ```
 
+**Broadband usage is clearly not distributed evenly across US regions. The densely populated areas in the north east such as New Jersey, New York and Boston have extremely dense broadband usage. Which makes sense, because these areas are heavily populated, and they both have the customer base that we need broadband Internet, there is also a much higher access to education in more populated areas. The more remote areas of New England (like Maine or northern Vermont or New Hampshire) tell a different story, with broadband usage mostly below 30 percent. Most of the eastern seaboard except for a little dead zone in North Carolina has some pretty decent coverage but nothing like the more metropolitan northern Atlantic areas. The only areas that come close to the New York, New Jersey and Boston axis are Florida and large sections of the East Coast, especially the county's clustered around Los Angeles, San Francisco, and Seattle. The Great Lakes region has relatively good coverage especially around its major metropolitan areas. Things get more complicated in inland America. Other than a few metropolitan areas in the southeast, the whole southern region is pretty much barron in terms of broadband coverage. With the majority of the region being below 30 percent usage. Even Texas, with all of its large cities, can not keep its remote areas covered. Utah and Arizona have actually impressive usage, despite their size and spread out populations, possessing 40 percent usage or greater in even the worst parts. Nevada and New Mexico have a more similar situation to the American southeast. The case seems to be that most of the more rural American regions do not use broadband Internet to the same extent that their more urban counterparts do. **
+
+**A few interesting things can be gleaned from the table of summary stats. However, what stands out the most is the difference between median and broadband usage and access, with median usage being around 37 percent but median access at an impressive 92 percent. This difference is telling us that there are sizable sections of the population that live in areas where they could use broadband Internet, but do not. Poverty and lack of education could certainly be a problem in this quartile, remember that the median quartile is just the center of the distribution. Down in the first quartile, it is a similar story, but even more exaggerated. Usage is only around 17 percent but access is at 77 percent. Things are much more stable in the third quartile with half of people using broadband Internet. The first two quartiles are concerning because it is not that there is not the infrastructure for broadband Internet, but that something is preventing people from using it.**
+
 ```{r}
 # Correlation Heatmap
 correlation_data <- final_data |>
@@ -259,6 +260,8 @@ ggplot(corr_matrix_melted, aes(Var1, Var2, fill = value)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+**Broadband usage is inversely correlated with the poverty rate, meaning loosely as broadband usage goes up the poverty rate goes down. It stands to reason that there are financial barriers to accessing the newer broadband Internet, compared with other forms of information access. People in poorer counties also would probably have bigger issues, then broadband Internet access. The educational access the broadband Internet could provide, would help many people in these places out of poverty. This is also apparent in the heat map, with the level of bachelors of arts or sciences being about 60 percent correlated with broadband usage. However, the percentage of bachelor degrees in the county was over 70 percent positively correlated with income and 50 percent negatively correlated with poverty rates. Educational resources are increasingly accessible through the Internet, those with less access to better quality Internet resources will have a much harder time, pulling themselves out of poverty. Broadband usage is also 56 percent correlated with higher median wages. It is interesting that there is a slightly stronger correlation with broadband usage, and bachelor degrees then there is with median income, this could be because there might be a sizable percentage of elderly people who are more established at their companies, but never made the switch over to broadband. **
+
 ```{r}
 #Broadband Usage by Region (North, South, East, West)
 final_data <- final_data |>
@@ -280,6 +283,8 @@ ggplot(region_usage, aes(x = region, y = average_usage, fill = region)) +
   theme_minimal()
 ```
 
+**Once again, we see that the northeast dominates broadband usage, with around 60 percent of households having access to the service. While the American West–despite having a lot more rural areas– takes second place. Despite having its share of Metropolitan cities and traditionally being a logistics hub, the Midwest comes in at third place for broadband usage. Other than areas outside of the lower 48 such as Alaska, Hawaii, and the various US territories, the American South has the poorest broadband usage. This representation only shows the further confirmation rural America is generally underserved in respect to broadband access. The south also has less of a cultural emphasis on technology and education, which may slow its adoption of new systems. **
+
 ```{r}
 # Map with Usage vs. Availability (The difference)
 map_data <- map_data |>
@@ -297,6 +302,12 @@ tm_shape(map_data) +
 ```
 
 
+**The usage versus availability map shows us that there is more access to broadband Internet throughout the United States, then people who use it. This is very pronounced through a large swath of the south east, but especially in Kentucky, West Virginia, the general Appalachian regions and Texas. It is the same story again for the Midwest but not as dramatic a difference as there is in the south east. The northeast is not without its low broadband usage zones either, With Northern inland Maine and sections of upstate New York having relatively low broadband usage despite availability. It is worth noting that in some of the more rural areas, people who work there may not have encountered broadband Internet through their job and so have never really been exposed to it. **
+
+
+## Conclusion:
+
+**Broadband Internet usage is correlated with higher wages, better educational attainment and lower poverty rates. Despite this large sections of the country do not utilize this resource, despite the fact that the infrastructure is seemingly in place. To increase broadband usage, especially in more rural areas, and lower income communities within major cities it would be necessary to increase awareness about the associated benefits of using broadband and remove some of the financial barriers to using the service. A good step in decreasing educational and income inequality would be to increase usage of broadband Internet.**
 
 
 
